@@ -6,6 +6,8 @@ public class Fragment {
     private EncodingRate encRate;
 
     public Fragment(int number, EncodingRate encRate){
+        this.number = number;
+        this.encRate = encRate;
     }
 
     public int getRate() {
