@@ -11,4 +11,8 @@ public enum EncodingRate {
     EncodingRate(int kbps) {
         this.kbps = kbps;
     }
+
+    public int getKbps() {
+        return kbps;
+    }
 }
