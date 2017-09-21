@@ -1,0 +1,9 @@
+Events:
+Download completion
+Buffer run-out
+Change in available bandwidth
+Second of video played(?)
+
+States:
+Playing
+Stalling
