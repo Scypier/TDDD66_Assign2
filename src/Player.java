@@ -24,12 +24,12 @@ public class Player {
     private int availBandwidth;
     private int time;
     private boolean newFrag;
+    private int nextFragNum;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
         this.minBuff = minBuff;
         this.maxBuff = maxBuff;
-        currFrag = new Fragment(-1, EncodingRate.ZERO, 4);
         currentState = State.DOWNLOADING;
         nextQuality = EncodingRate.ZERO;
         newFrag = true;
@@ -37,6 +37,7 @@ public class Player {
         estBandwidth = 0;
         time = 0;
         maxFragNum = (videoLength*60)/4;
+        nextFragNum = 1;
     }
 
     public void run(Vector bandwidth) {
@@ -55,8 +56,10 @@ public class Player {
     }
 
     private void beginDownload() {
-        currFrag = new Fragment(currFrag.getNumber()+1, nextQuality, 4);
-        downloadSec();
+        if(currFrag.getNumber()+1 <= maxFragNum) {
+            currFrag = new Fragment(currFrag.getNumber(), nextQuality, 4);
+            downloadSec();
+        }
     }
 
     private void downloadSec() {
@@ -67,6 +70,7 @@ public class Player {
             currDownloaded = 0;
             estimateBandwidth();
             newFrag = true;
+            nextFragNum++;
         } else {
             newFrag = false;
         }
@@ -83,5 +87,16 @@ public class Player {
     }
 
     private void updateState() {
+        if(currBuff > 0) {
+            if(currBuff <= maxBuff && nextFragNum <= maxFragNum ) {
+                currentState = State.PLAYINGDOWNLOADING;
+            } else {
+                currentState = State.PLAYING;
+            }
+        } else if(nextFragNum <= maxFragNum) {
+            currentState = State.DOWNLOADING;
+        } else {
+            currentState = State.FINISHED;
+        }
     }
 }
