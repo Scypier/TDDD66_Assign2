@@ -5,6 +5,14 @@ import java.net.URL;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        Player player = new Player(4, 6, 2);
+        player.start();
+
+        while()
+        // Gå fram i log
+        // Ladda ner om vi får
+        // Spela om vi får
+        // Inkrementera
     }
 
     private static Vector trace() throws IOException {
@@ -13,9 +21,9 @@ public class Main {
 
         while(s.hasNextLine()){
             String[] parts = s.nextLine().split(" ");
-            bandwidth.add(Integer.parseInt(parts[4]));
+            bandwidth.add(Integer.parseInt(parts[4])*8);
         }
 
-        return bandwidth;
+        return bandwidth; // Expressed in bits per second
     }
 }

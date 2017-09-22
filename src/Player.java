@@ -16,12 +16,14 @@ public class Player {
     private int maxFragNum;
     //The amount of bits downloaded of the current fragment
     private int currDownloaded;
+    //The current state of the player deciding what actions to take
+    private State currentState;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
         this.minBuff = minBuff;
         this.maxBuff = maxBuff;
-        currFrag = new Fragment(-1);
+        currFrag = new Fragment(0, EncodingRate.ZERO); // Dummy to download first fragment
         nextQuality = EncodingRate.ZERO;
         currBuff = 0;
         estBandwidth = 0;
@@ -29,16 +31,19 @@ public class Player {
     }
 
     public void start() {
-        downloadNextFrag();
+        downloadFrag();
+        while(downloadSec());
     }
 
-    private void downloadNextFrag() {
-        download(new Fragment(currFrag.getNumber()+1, nextQuality));
-        nextQuality = estimateBandwidth();
+    private void downloadFrag() {
+        Fragment fragment = new Fragment(currFrag.getNumber()+1, nextQuality);
+        downloadSec(fragment);
     }
 
-    private void download(Fragment frag) {
+    private boolean downloadSec(Fragment frag) {
         //TODO: Decide how to implement downloading
+
+        return false;
     }
 
     private EncodingRate estimateBandwidth() {

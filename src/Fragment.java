@@ -9,10 +9,6 @@ public class Fragment {
         this.number = number;
         this.encRate = encRate;
     }
-    public Fragment(int number){
-        this.number = number;
-        this.encRate = EncodingRate.ZERO;
-    }
 
     public int getNumber() {
         return number;
