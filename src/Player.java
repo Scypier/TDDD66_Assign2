@@ -35,6 +35,7 @@ public class Player {
         newFrag = true;
         currBuff = 0;
         estBandwidth = 0;
+        currDownloaded = 0;
         time = 0;
         maxFragNum = (videoLength*60)/4;
         nextFragNum = 1;
@@ -57,7 +58,7 @@ public class Player {
     }
 
     private void beginDownload() {
-        currFrag = new Fragment(currFrag.getNumber(), nextQuality, 4);
+        currFrag = new Fragment(nextFragNum, nextQuality, 4);
         downloadSec();
     }
 
