@@ -10,8 +10,6 @@ public class Player {
     private EncodingRate nextQuality;
     //The current buffer size
     private int currBuff;
-    //The number of the next fragment
-    private int nextFragNum;
     //The current fragment being downloaded
     private Fragment currFrag;
     //The maximum number of fragments
@@ -21,10 +19,10 @@ public class Player {
     public Player(int minBuff, int maxBuff, int videoLength) {
         this.minBuff = minBuff;
         this.maxBuff = maxBuff;
+        currFrag = new Fragment(-1);
         nextQuality = EncodingRate.ZERO;
         currBuff = 0;
         estBandwidth = 0;
-        nextFragNum = 0;
         maxFragNum = (videoLength*60)/4;
     }
 
@@ -33,8 +31,7 @@ public class Player {
     }
 
     private void downloadNextFrag() {
-        download(new Fragment(nextFragNum, nextQuality));
-        nextFragNum++;
+        download(new Fragment(currFrag.getNumber()+1, nextQuality));
         nextQuality = estimateBandwidth();
     }
 
