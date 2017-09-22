@@ -23,6 +23,7 @@ public class Player {
     //Actual available bandwidth
     private int availBandwidth;
     private int time;
+    private boolean newFrag;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
@@ -31,6 +32,7 @@ public class Player {
         currFrag = new Fragment(-1, EncodingRate.ZERO, 4);
         currentState = State.DOWNLOADING;
         nextQuality = EncodingRate.ZERO;
+        newFrag = true;
         currBuff = 0;
         estBandwidth = 0;
         time = 0;
@@ -39,8 +41,12 @@ public class Player {
 
     public void run(Vector bandwidth) {
         while(currentState!=State.FINISHED) {
-            if (currentState == State.DOWNLOADING || currentState == State.PLAYINGDOWNLOADING)
-                downloadFrag();
+            if (currentState == State.DOWNLOADING || currentState == State.PLAYINGDOWNLOADING) {
+                if(newFrag)
+                    beginDownload();
+                else
+                    downloadSec();
+            }
             if(currentState == State.PLAYING || currentState == State.PLAYINGDOWNLOADING)
                 playSec();
             time++;
@@ -48,12 +54,12 @@ public class Player {
         }
     }
 
-    private void downloadFrag() {
-        Fragment fragment = new Fragment(currFrag.getNumber()+1, nextQuality, 4);
-        downloadSec(fragment);
+    private void beginDownload() {
+        currFrag = new Fragment(currFrag.getNumber()+1, nextQuality, 4);
+        downloadSec();
     }
 
-    private void downloadSec(Fragment frag) {
+    private void downloadSec() {
         currDownloaded += availBandwidth;
         //TODO: Record statistics about the download that can be used to estimate bandwidth
         if(currDownloaded >= currFrag.getRate()*currFrag.getLength()) {
