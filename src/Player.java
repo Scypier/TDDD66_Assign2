@@ -40,8 +40,9 @@ public class Player {
         nextFragNum = 1;
     }
 
-    public void run(Vector bandwidth) {
+    public void run(Vector<Integer> bandwidth) {
         while(currentState!=State.FINISHED) {
+            availBandwidth = bandwidth.get(time);
             if (currentState == State.DOWNLOADING || currentState == State.PLAYINGDOWNLOADING) {
                 if(newFrag)
                     beginDownload();
@@ -77,7 +78,7 @@ public class Player {
     }
 
     private void playSec() {
-
+        currBuff--;
     }
 
     private EncodingRate estimateBandwidth() {

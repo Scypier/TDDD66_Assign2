@@ -9,9 +9,9 @@ public class Main {
         player.run(trace());
     }
 
-    private static Vector trace() throws IOException {
+    private static Vector<Integer> trace() throws IOException {
         Scanner s = new Scanner(new URL("http://www.ida.liu.se/~TDDD66/labs/2017/report.2011-01-30_1323CET.log").openStream());
-        Vector bandwidth = new Vector();
+        Vector<Integer> bandwidth = new Vector();
 
         while(s.hasNextLine()){
             String[] parts = s.nextLine().split(" ");
