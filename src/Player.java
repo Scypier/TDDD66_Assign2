@@ -57,10 +57,8 @@ public class Player {
     }
 
     private void beginDownload() {
-        if(currFrag.getNumber()+1 <= maxFragNum) {
-            currFrag = new Fragment(currFrag.getNumber(), nextQuality, 4);
-            downloadSec();
-        }
+        currFrag = new Fragment(currFrag.getNumber(), nextQuality, 4);
+        downloadSec();
     }
 
     private void downloadSec() {
@@ -81,21 +79,23 @@ public class Player {
         currBuff--;
     }
 
-    private EncodingRate estimateBandwidth() {
+    private void estimateBandwidth() {
         //TODO: Calculations here
-        estBandwidth = 0;
-        return EncodingRate.ZERO;
+        //TODO: Set nextQuality
     }
 
     private void updateState() {
-        if(currBuff > 0) {
+        if(currBuff > 0 && currentState != State.DOWNLOADING) {
             if(currBuff <= maxBuff && nextFragNum <= maxFragNum ) {
                 currentState = State.PLAYINGDOWNLOADING;
             } else {
                 currentState = State.PLAYING;
             }
         } else if(nextFragNum <= maxFragNum) {
-            currentState = State.DOWNLOADING;
+            if(currBuff >= minBuff)
+                currentState = State.PLAYINGDOWNLOADING;
+            else
+                currentState = State.DOWNLOADING;
         } else {
             currentState = State.FINISHED;
         }
