@@ -53,13 +53,21 @@ public class Player {
         downloadSec(fragment);
     }
 
-    private boolean downloadSec(Fragment frag) {
-        //TODO: Decide how to implement downloading
+    private void downloadSec(Fragment frag) {
         currDownloaded += availBandwidth;
+        //TODO: Record statistics about the download that can be used to estimate bandwidth
         if(currDownloaded >= currFrag.getRate()*currFrag.getLength()) {
-            return true;
+            currBuff += currFrag.getLength();
+            currDownloaded = 0;
+            estimateBandwidth();
+            newFrag = true;
+        } else {
+            newFrag = false;
         }
-        return false;
+    }
+
+    private void playSec() {
+
     }
 
     private EncodingRate estimateBandwidth() {
