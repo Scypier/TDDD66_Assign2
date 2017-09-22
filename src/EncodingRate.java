@@ -4,15 +4,16 @@ import com.sun.media.jfxmedia.track.Track;
  * Created by David on 2017-09-21.
  */
 public enum EncodingRate {
-    ZERO(250),ONE(500),TWO(850),THREE(1300);
+    //Encoding rates expressed in bits per second
+    ZERO(250000),ONE(500000),TWO(850000),THREE(1300000);
 
-    private final int kbps;
+    private final int bps;
 
-    EncodingRate(int kbps) {
-        this.kbps = kbps;
+    EncodingRate(int bps) {
+        this.bps = bps;
     }
 
-    public int getKbps() {
-        return kbps;
+    public int getBps() {
+        return bps;
     }
 }
