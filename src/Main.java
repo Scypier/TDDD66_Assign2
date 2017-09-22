@@ -6,13 +6,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         Player player = new Player(4, 6, 2);
-        player.start();
-
-        while()
-        // Gå fram i log
-        // Ladda ner om vi får
-        // Spela om vi får
-        // Inkrementera
+        player.run(trace());
     }
 
     private static Vector trace() throws IOException {

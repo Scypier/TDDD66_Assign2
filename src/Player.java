@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 /**
  * Created by David on 2017-09-22.
  */
@@ -20,20 +22,30 @@ public class Player {
     private State currentState;
     //Actual available bandwidth
     private int availBandwidth;
+    private int time;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
         this.minBuff = minBuff;
         this.maxBuff = maxBuff;
         currFrag = new Fragment(-1, EncodingRate.ZERO, 4);
+        currentState = State.DOWNLOADING;
         nextQuality = EncodingRate.ZERO;
         currBuff = 0;
         estBandwidth = 0;
+        time = 0;
         maxFragNum = (videoLength*60)/4;
     }
 
-    public void start() {
-        downloadFrag();
+    public void run(Vector bandwidth) {
+        while(currentState!=State.FINISHED) {
+            if (currentState == State.DOWNLOADING || currentState == State.PLAYINGDOWNLOADING)
+                downloadFrag();
+            if(currentState == State.PLAYING || currentState == State.PLAYINGDOWNLOADING)
+                playSec();
+            time++;
+            updateState();
+        }
     }
 
     private void downloadFrag() {
@@ -56,5 +68,6 @@ public class Player {
         return EncodingRate.ZERO;
     }
 
-
+    private void updateState() {
+    }
 }
