@@ -14,6 +14,8 @@ public class Player {
     private Fragment currFrag;
     //The maximum number of fragments
     private int maxFragNum;
+    //The amount of bits downloaded of the current fragment
+    private int currDownloaded;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
@@ -36,10 +38,14 @@ public class Player {
     }
 
     private void download(Fragment frag) {
-
+        //TODO: Decide how to implement downloading
     }
 
     private EncodingRate estimateBandwidth() {
+        //TODO: Calculations here
+        estBandwidth = 0;
         return EncodingRate.ZERO;
     }
+
+
 }
