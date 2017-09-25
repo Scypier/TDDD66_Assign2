@@ -16,5 +16,6 @@ public class Fragment {
         return encRate.getBps();
     }
     public int getLength() { return length; }
+    public EncodingRate getRateEnum() { return encRate;}
     public int getSize() {return getRate()*getLength();}
 }

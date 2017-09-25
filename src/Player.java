@@ -3,7 +3,8 @@ public class Player {
     private final int minBuff;
     private final int maxBuff;
     //The current estimated available bandwidth;
-    private int estBandwidth;
+    private int oldEstBandwidth;
+    private int newEstBandwidth;
     //The encoding rate the player wants the next fragment at
     private EncodingRate nextQuality;
     //The current buffer size
@@ -22,6 +23,8 @@ public class Player {
     private boolean newFrag;
     private int nextFragNum;
     private int downloadTime;
+    private int EWMA;
+    private int fragLength;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
@@ -29,12 +32,16 @@ public class Player {
         this.maxBuff = maxBuff;
         currState = State.DOWNLOADING;
         nextQuality = EncodingRate.ZERO;
+        fragLength = 4;
+        currFrag = new Fragment(0, nextQuality, fragLength);
         newFrag = true;
         currBuff = 0;
-        estBandwidth = 0;
+        oldEstBandwidth = 0;
+        newEstBandwidth = 0;
         currDownloaded = 0;
         time = 0;
-        maxFragNum = (videoLength*60)/4;
+        EWMA = 1;
+        maxFragNum = (videoLength*60)/fragLength;
         nextFragNum = 1;
         downloadTime = 0;
     }
@@ -59,21 +66,20 @@ public class Player {
     private void testPrint() {
         System.out.println("Current state:    " + currState);
         System.out.println("Current buffer:   " + currBuff);
-        System.out.println("Current quality:  " + nextQuality);
+        System.out.println("Current quality:  " + currFrag.getRateEnum());
         System.out.println("Current time:     " + time);
-        System.out.println("Current fragment: " + (nextFragNum-1));
+        System.out.println("Current fragment: " + currFrag.getNumber());
     }
 
     private void beginDownload() {
-        currFrag = new Fragment(nextFragNum, nextQuality, 4);
+        currFrag = new Fragment(nextFragNum, nextQuality, fragLength);
         downloadSec();
     }
 
     private void downloadSec() {
         currDownloaded += availBandwidth;
         downloadTime++;
-        //TODO: Record statistics about the download that can be used to estimate bandwidth
-        if(currDownloaded >= currFrag.getRate()*currFrag.getLength()) {
+        if(currDownloaded >= currFrag.getSize()) {
             currBuff += currFrag.getLength();
             currDownloaded = 0;
             estimateBandwidth();
@@ -90,8 +96,9 @@ public class Player {
     }
 
     private void estimateBandwidth() {
-        //TODO: Calculations here
-        //TODO: Set nextQuality
+        newEstBandwidth = currFrag.getSize()/downloadTime;
+        oldEstBandwidth = ((1-EWMA)*oldEstBandwidth) + (EWMA * newEstBandwidth);
+        nextQuality = EncodingRate.getHighestRate(oldEstBandwidth*currBuff,fragLength, nextQuality);
     }
 
     private void updateState() {

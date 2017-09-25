@@ -12,14 +12,16 @@ public enum EncodingRate {
         return bps;
     }
 
-    public EncodingRate getHighestRate(int fragSize, int fragLength) {
-        EncodingRate highest = EncodingRate.ZERO;
-        for (EncodingRate rate : EncodingRate.values()) {
-            if(rate.getBps()*fragLength <= fragSize) {
+    public static EncodingRate getHighestRate(int fragSize, int fragLength, EncodingRate currQuality) {
+        EncodingRate highest = ZERO;
+        int ordinalDiff;
+        if(currQuality == THREE)
+            highest = ONE;
+
+        for (EncodingRate rate : values()) {
+            ordinalDiff = valueOf(rate.toString()).ordinal() - valueOf(currQuality.toString()).ordinal();
+            if(rate.getBps() * fragLength <= fragSize && ordinalDiff >= -2 && ordinalDiff <= 1)
                 highest = rate;
-            } else {
-                return highest;
-            }
         }
         return highest;
     }
