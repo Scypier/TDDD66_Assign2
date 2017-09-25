@@ -102,19 +102,26 @@ public class Player {
     }
 
     private void updateState() {
-        if(currBuff > 0 && currState != State.DOWNLOADING) {
-            if(currBuff <= maxBuff && nextFragNum <= maxFragNum ) {
+        if(currState == State.PLAYING) {
+            if(currBuff < minBuff && nextFragNum <= maxFragNum) {
                 currState = State.PLAYINGDOWNLOADING;
-            } else {
-                currState = State.PLAYING;
+            } else if(currBuff == 0 && nextFragNum > maxFragNum) {
+                currState = State.FINISHED;
             }
-        } else if(nextFragNum <= maxFragNum) {
-            if(currBuff >= minBuff)
-                currState = State.PLAYINGDOWNLOADING;
-            else
+        }
+         else if(currState == State.PLAYINGDOWNLOADING) {
+            if(currBuff > maxBuff || nextFragNum > maxFragNum) {
+                currState = State.PLAYING;
+            } else if(currBuff == 0) {
                 currState = State.DOWNLOADING;
-        } else {
-            currState = State.FINISHED;
+            }
+        }
+        else if(currState == State.DOWNLOADING) {
+            if(nextFragNum > maxFragNum) {
+                currState = State.PLAYING;
+            } else if(currBuff >= minBuff) {
+                currState = State.PLAYINGDOWNLOADING;
+            }
         }
     }
 }
