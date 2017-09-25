@@ -1,8 +1,4 @@
 import java.util.Vector;
-
-/**
- * Created by David on 2017-09-22.
- */
 public class Player {
     private final int minBuff;
     private final int maxBuff;
@@ -19,7 +15,7 @@ public class Player {
     //The amount of bits downloaded of the current fragment
     private int currDownloaded;
     //The current state of the player deciding what actions to take
-    private State currentState;
+    private State currState;
     //Actual available bandwidth
     private int availBandwidth;
     private int time;
@@ -30,7 +26,7 @@ public class Player {
     public Player(int minBuff, int maxBuff, int videoLength) {
         this.minBuff = minBuff;
         this.maxBuff = maxBuff;
-        currentState = State.DOWNLOADING;
+        currState = State.DOWNLOADING;
         nextQuality = EncodingRate.ZERO;
         newFrag = true;
         currBuff = 0;
@@ -42,19 +38,28 @@ public class Player {
     }
 
     public void run(Vector<Integer> bandwidth) {
-        while(currentState!=State.FINISHED) {
+        while(currState!=State.FINISHED) {
+            testPrint();
             availBandwidth = bandwidth.get(time);
-            if (currentState == State.DOWNLOADING || currentState == State.PLAYINGDOWNLOADING) {
+            if(currState == State.PLAYING || currState == State.PLAYINGDOWNLOADING)
+                playSec();
+            if (currState == State.DOWNLOADING || currState == State.PLAYINGDOWNLOADING) {
                 if(newFrag)
                     beginDownload();
                 else
                     downloadSec();
             }
-            if(currentState == State.PLAYING || currentState == State.PLAYINGDOWNLOADING)
-                playSec();
             time++;
             updateState();
         }
+    }
+
+    private void testPrint() {
+        System.out.println("Current state:    " + currState);
+        System.out.println("Current buffer:   " + currBuff);
+        System.out.println("Current quality:  " + nextQuality);
+        System.out.println("Current time:     " + time);
+        System.out.println("Current fragment: " + (nextFragNum-1));
     }
 
     private void beginDownload() {
@@ -86,19 +91,19 @@ public class Player {
     }
 
     private void updateState() {
-        if(currBuff > 0 && currentState != State.DOWNLOADING) {
+        if(currBuff > 0 && currState != State.DOWNLOADING) {
             if(currBuff <= maxBuff && nextFragNum <= maxFragNum ) {
-                currentState = State.PLAYINGDOWNLOADING;
+                currState = State.PLAYINGDOWNLOADING;
             } else {
-                currentState = State.PLAYING;
+                currState = State.PLAYING;
             }
         } else if(nextFragNum <= maxFragNum) {
             if(currBuff >= minBuff)
-                currentState = State.PLAYINGDOWNLOADING;
+                currState = State.PLAYINGDOWNLOADING;
             else
-                currentState = State.DOWNLOADING;
+                currState = State.DOWNLOADING;
         } else {
-            currentState = State.FINISHED;
+            currState = State.FINISHED;
         }
     }
 }
