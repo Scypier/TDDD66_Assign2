@@ -21,6 +21,7 @@ public class Player {
     private int time;
     private boolean newFrag;
     private int nextFragNum;
+    private int downloadTime;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
@@ -35,6 +36,7 @@ public class Player {
         time = 0;
         maxFragNum = (videoLength*60)/4;
         nextFragNum = 1;
+        downloadTime = 0;
     }
 
     public void run(Vector<Integer> bandwidth) {
@@ -69,6 +71,7 @@ public class Player {
 
     private void downloadSec() {
         currDownloaded += availBandwidth;
+        downloadTime++;
         //TODO: Record statistics about the download that can be used to estimate bandwidth
         if(currDownloaded >= currFrag.getRate()*currFrag.getLength()) {
             currBuff += currFrag.getLength();
@@ -76,6 +79,7 @@ public class Player {
             estimateBandwidth();
             newFrag = true;
             nextFragNum++;
+            downloadTime = 0;
         } else {
             newFrag = false;
         }
