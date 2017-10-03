@@ -100,8 +100,8 @@ public class Player {
         System.out.println("Current time:            " + time);
         System.out.println("Current fragment:        " + currFrag.getNumber());
         System.out.println("Current playing quality: " + playQual);
-        System.out.println(time + " " + currBuff);
-        System.out.println(time + " " + EncodingRate.valueOf(playQual.toString()).ordinal());
+        //System.out.println(time + " " + currBuff);
+        //System.out.println(time + " " + EncodingRate.valueOf(playQual.toString()).ordinal());
     }
 
     /**
