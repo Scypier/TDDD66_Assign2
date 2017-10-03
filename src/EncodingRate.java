@@ -12,7 +12,7 @@ public enum EncodingRate {
         return bps;
     }
 
-    public static EncodingRate getHighestRate(int fragSize, int fragLength, EncodingRate currQuality) {
+    public static EncodingRate getHighestRate(double fragSize, int fragLength, EncodingRate currQuality) {
         EncodingRate highest = ZERO;
         int ordinalDiff;
         if(currQuality == THREE)

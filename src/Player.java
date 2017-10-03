@@ -1,9 +1,11 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Vector;
 public class Player {
     private final int minBuff;
     private final int maxBuff;
     //The current estimated available bandwidth;
-    private int oldEstBandwidth;
+    private double oldEstBandwidth;
     private int newEstBandwidth;
     //The encoding rate the player wants the next fragment at
     private EncodingRate nextQuality;
@@ -23,8 +25,10 @@ public class Player {
     private boolean newFrag;
     private int nextFragNum;
     private int downloadTime;
-    private int EWMA;
+    private double EWMA;
     private int fragLength;
+    private Queue<EncodingRate> buffQual;
+    private EncodingRate playQual;
 
 
     public Player(int minBuff, int maxBuff, int videoLength) {
@@ -44,6 +48,8 @@ public class Player {
         maxFragNum = (videoLength*60)/fragLength;
         nextFragNum = 1;
         downloadTime = 0;
+        buffQual = new LinkedList<>();
+        playQual = EncodingRate.ZERO;
     }
 
     public void run(Vector<Integer> bandwidth) {
@@ -64,15 +70,19 @@ public class Player {
     }
 
     private void testPrint() {
-        System.out.println("Current state:    " + currState);
-        System.out.println("Current buffer:   " + currBuff);
-        System.out.println("Current quality:  " + currFrag.getRateEnum());
-        System.out.println("Current time:     " + time);
-        System.out.println("Current fragment: " + currFrag.getNumber());
+        //System.out.println("Current state:           " + currState);
+        //System.out.println("Current buffer:          " + currBuff);
+        //System.out.println("Current quality:         " + currFrag.getRateEnum());
+        //System.out.println("Current time:            " + time);
+        //System.out.println("Current fragment:        " + currFrag.getNumber());
+        //System.out.println("Current playing quality: " + playQual);
+        //System.out.println(time + " " + currBuff);
+        //System.out.println(time + " " + EncodingRate.valueOf(playQual.toString()).ordinal());
     }
 
     private void beginDownload() {
         currFrag = new Fragment(nextFragNum, nextQuality, fragLength);
+        //System.out.println(time + " " + EncodingRate.valueOf(currFrag.getRateEnum().toString()).ordinal());
         downloadSec();
     }
 
@@ -81,6 +91,9 @@ public class Player {
         downloadTime++;
         if(currDownloaded >= currFrag.getSize()) {
             currBuff += currFrag.getLength();
+            for(int i = 0; i < currFrag.getLength(); i++) {
+                buffQual.add(currFrag.getRateEnum());
+            }
             currDownloaded = 0;
             estimateBandwidth();
             newFrag = true;
@@ -93,6 +106,7 @@ public class Player {
 
     private void playSec() {
         currBuff--;
+        playQual = buffQual.remove();
     }
 
     private void estimateBandwidth() {
